@@ -12,6 +12,16 @@ const generateBatik = async (event: Event) => {
   generating.value = false;
 };
 
+const generateRandomPrompt = () => {
+  const colors = ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'pink', 'black', 'white', 'earth'];
+  const object = ['flower', 'leaf', 'tree', 'dragon', 'bird', 'fish', 'line and dot', 'cloud', 'abstract pattern', 'geometric'];
+
+  const randomColor1 = colors[Math.floor(Math.random() * colors.length)];
+  const randomColor2 = colors[Math.floor(Math.random() * colors.length)];
+  const randomObject = object[Math.floor(Math.random() * object.length)];
+  prompt.value = `batik with ${randomColor1} color ${randomObject} in ${randomColor2} background`;
+}
+
 onMounted(() => {
   const queueEventSource = new EventSource('/api/queue');
   queueEventSource.onmessage = (event) => {
@@ -25,7 +35,7 @@ onMounted(() => {
 <template>
   <div>
     <div class="text-center mb-16">
-      <h1 class="text-4xl font-bold mb-2">Buat Batik</h1>
+      <h1 class="text-4xl font-bold mb-2">Buat Pola<Icon name="heroicons:sparkles-solid" class="text-yellow-400"/></h1>
       <p class="text-lg italic text-gray-600">Buat motif batikmu sendiri cukup dengan deskripsi singkat.</p>
     </div>
     <form @submit="generateBatik" class="flex justify-center items-center">
@@ -37,7 +47,10 @@ onMounted(() => {
           placeholder="Masukkan deskripsi motif batik di sini..." 
           required
         />
-        <button class="flex items-center"><Icon name="heroicons:sparkles" /></button>
+        <span class="flex items-center gap-2">
+          <button type="submit" class="flex items-center"><Icon class="flex items-center" name="heroicons:sparkles" size="1.5rem" /></button>
+          <button type="button" @click="generateRandomPrompt()"><Icon class="flex items-center" name="mdi:dice-multiple" size="1.5rem" /></button>
+        </span>
       </div>
     </form>
     <div class="flex justify-center mt-4 flex-col items-center">

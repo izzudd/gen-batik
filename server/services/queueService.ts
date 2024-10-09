@@ -1,36 +1,40 @@
-import type { Storage } from 'unstorage';
+import { ComfyUIClient } from "comfy-ui-client";
+import { randomUUID } from "crypto";
 
 type State = 'start' | 'done';
 
-let ququeService: ReturnType<typeof initQueueService> | null = null;
+let queueService: ReturnType<typeof initQueueService> | null = null;
 
-export default function useQueueService(storage: Storage) {
-  if (!ququeService) {
-    ququeService = initQueueService(storage);
+export default function useQueueService() {
+  if (!queueService) {
+    queueService = initQueueService();
   }
-  return ququeService;
+  return queueService;
 }
 
-function initQueueService(storage: Storage) {
-  let listeners: ((length: number, state: State, error?: unknown) => void)[] = [];
+function initQueueService() {
+  const listeners: ((length: number, state: State, error?: unknown) => void)[] = [];
+  const queueLength = {value: 0};
 
   function listen(listener: (length: number, state: State, error?: unknown) => void) {
     listeners.push(listener);
   }
 
-  async function notifyAndUpdate(state: State, error?: unknown, increment: number = 0) {
-    const queueLength = (await storage.getItem<number>('queueLength') || 0) + increment;
-    await storage.setItem('queueLength', queueLength);
-    listeners.forEach(watcher => watcher(queueLength, state, error));
+  function notifyAndUpdate(state: State, error?: unknown, increment: number = 0) {
+    queueLength.value += increment;
+    listeners.forEach(watcher => watcher(queueLength.value, state, error));
   }
 
-  async function addTask(task: () => Promise<void>) {
-    await notifyAndUpdate('start', undefined, 1);
+  async function addTask(task: (client: ComfyUIClient) => Promise<void>) {
+    notifyAndUpdate('start', undefined, 1);
     try {
-      await task();
-      await notifyAndUpdate('done', undefined, -1);
+      const { comfyUrl } = useRuntimeConfig();
+      const client = new ComfyUIClient(comfyUrl, randomUUID());
+      await client.connect();
+      await task(client);
+      notifyAndUpdate('done', undefined, -1);
     } catch (error) {
-      await notifyAndUpdate('done', error, -1);
+      notifyAndUpdate('done', error, -1);
     }
   }
 

@@ -8,3 +8,7 @@ onUnmounted(() => {
   document.documentElement.style.backgroundImage = '';
 })
 </script>
+
+<template>
+  <div class="h-screen w-full" @click="$router.back()" />
+</template>
