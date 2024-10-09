@@ -19,8 +19,8 @@ function initQueueService(storage: Storage) {
   }
 
   async function notifyAndUpdate(state: State, error?: unknown, increment: number = 0) {
-    const queueLength = await storage.getItem<number>('queueLength') || 0;
-    await storage.setItem('queueLength', queueLength + increment);
+    const queueLength = (await storage.getItem<number>('queueLength') || 0) + increment;
+    await storage.setItem('queueLength', queueLength);
     listeners.forEach(watcher => watcher(queueLength, state, error));
   }
 

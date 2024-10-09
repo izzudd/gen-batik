@@ -11,7 +11,7 @@ export default function(storage: Storage) {
     getIds: async () => {
       const keys = await storage.getKeys();
       const uniqueIds = new Set(keys.map(key => key.split(':')[0]));
-      return Array.from(uniqueIds).sort();
+      return Array.from(uniqueIds).sort().toReversed();
     },
     getImage: async (id: string) => {
       return storage.getItemRaw(`${id}:image.png`) as unknown as Uint8Array;
