@@ -23,7 +23,7 @@ const generateRandomPrompt = () => {
 }
 
 onMounted(() => {
-  const queueEventSource = new EventSource('/api/queue');
+  const queueEventSource = new EventSource(`${useRuntimeConfig().app.baseURL}/api/queue`);
   queueEventSource.onmessage = (event) => {
     const { length, state, error } = JSON.parse(event.data);
     console.log({ length, state, error });

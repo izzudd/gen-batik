@@ -20,7 +20,7 @@ export default defineEventHandler(async event => {
     id = await storage.store(imageData, prompt);
   });
 
-  return `/generated/${id}`;
+  return `${process.env.NITRO_APP_BASE_URL || ''}/generated/${id}`;
 })
 
 function getPromptedWorkflow(prompt: string) {
