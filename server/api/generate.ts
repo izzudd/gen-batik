@@ -10,14 +10,15 @@ export default defineEventHandler(async event => {
   const storage = storageService(useStorage('data'));
   const queue = useQueueService();
 
-  console.log('Generating image with prompt)', prompt);
+  const safePrompt = prompt.toLowerCase().includes('batik') ? prompt : `batik with ${prompt}`;
+  console.log('Generating image with prompt:', safePrompt);
 
   let id;
   await queue.addTask(async (client) => {
-    const images = await client.getImages(getPromptedWorkflow(prompt));
+    const images = await client.getImages(getPromptedWorkflow(safePrompt));
     const { blob } = images[Target.output][0];
     const imageData = new Uint8Array(await blob.arrayBuffer());
-    id = await storage.store(imageData, prompt);
+    id = await storage.store(imageData, safePrompt);
   });
 
   return `${process.env.NITRO_APP_BASE_URL || ''}/generated/${id}`;
