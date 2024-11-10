@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  gen-batik:
+    build: .
+    env_file: .env
+    volumes:
+      - ./workflow/comfy.pem:/app/comfy.pem:ro
+      - ./comfy-output:/app/comfy-output
+    ports:
+      - 3000:3000
+    entrypoint: ["/bin/sh", "/app/entrypoint.sh"]

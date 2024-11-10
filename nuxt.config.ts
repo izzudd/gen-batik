@@ -10,7 +10,7 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
-    comfyUrl: process.env.COMFY_ADDRESS || 'localhost:8188',
+    comfyUrl: 'localhost:' + (process.env.COMFY_PORT || '8188'),
   },
 
   postcss: {
