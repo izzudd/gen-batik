@@ -8,5 +8,5 @@ services:
       - ./workflow/comfy.pem:/app/comfy.pem:ro
       - ./comfy-output:/app/comfy-output
     ports:
-      - 3000:3000
+      - 2370:3000
     entrypoint: ["/bin/sh", "/app/entrypoint.sh"]
