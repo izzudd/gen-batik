@@ -1,15 +1,18 @@
 <script lang="ts" setup>
 const currentQueue = ref(0);
 const prompt = ref('');
-const generatedImageLink = ref();
+const generatedImageID = ref('');
+const generatedImageLink = computed(() => `/generated/${generatedImageID.value}`);
 const generating = ref(false);
+const error = ref(false);
+const readyToDisplay = computed(() => !error.value && !generating.value && generatedImageID.value)
 
 const generateBatik = async (event: Event) => {
-  generatedImageLink.value = undefined;
+  generatedImageID.value = '';
   generating.value = true;
+  error.value = false;
   event.preventDefault();
-  generatedImageLink.value = await $fetch('/api/generate', { query: { prompt: prompt.value } });
-  generating.value = false;
+  generatedImageID.value = await $fetch('/api/generate', { query: { prompt: prompt.value } });
 };
 
 const generateRandomPrompt = () => {
@@ -22,13 +25,29 @@ const generateRandomPrompt = () => {
   prompt.value = `batik with ${randomColor1} color ${randomObject} in ${randomColor2} background`;
 }
 
+let queueEventSource: EventSource
 onMounted(() => {
-  const queueEventSource = new EventSource(`/api/queue`);
+  console.log('[Websocket] open connection')
+  queueEventSource = new EventSource(`/api/queue`);
+  console.log('[Websocket] connected')
   queueEventSource.onmessage = (event) => {
-    const { length, state, error } = JSON.parse(event.data);
-    console.log({ length, state, error });
+    const { id, length, state, error } = JSON.parse(event.data);
+    console.log('[Websocket] message', { id, length, state, error });
     currentQueue.value = length;
+
+    if (error) {
+      error.value = true;
+      return;
+    }
+    if (id == generatedImageID.value) {
+      generating.value = false;
+    }
   };
+})
+onUnmounted(() => {
+  console.log('[Websocket] close connection')
+  queueEventSource.close()
+  console.log('[Websocket] closed')
 })
 </script>
 
@@ -54,11 +73,15 @@ onMounted(() => {
       </div>
     </form>
     <div class="flex justify-center mt-4 flex-col items-center">
-      <div class="max-w-full w-[512px] aspect-square">
-        <div class="w-full aspect-square bg-gray-200 animate-pulse" v-if="generating"></div>
-        <img loading="lazy" :src="generatedImageLink">
-      </div>
-      <span v-if="currentQueue" class="text-gray-600 text-sm mt-4">sedang ada {{ currentQueue }} proses dalam antrean</span>
+      <NuxtLink class="relative max-w-full w-[512px] aspect-square" :to="readyToDisplay ? `/preview?image=${generatedImageLink}` : undefined">
+        <div v-if="generating"class="w-full aspect-square bg-gray-200 animate-pulse" />
+        <img v-if="readyToDisplay"
+          class="absolute top-0 left-0 z-10 w-full h-full" 
+          loading="lazy" :src="generatedImageLink"
+        >
+      </NuxtLink>
+      <div v-if="currentQueue" class="text-gray-600 text-sm mt-4">sedang ada {{ currentQueue }} proses dalam antrean</div>
+      <div v-if="error" class="text-red-500 text-sm mt-4">Terjadi kesalahan, silahkan coba lagi</div>
     </div>
   </div>
 </template>

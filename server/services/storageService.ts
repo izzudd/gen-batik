@@ -13,11 +13,9 @@ export default function(storage: Storage) {
      * @param prompt - The prompt associated with the image.
      * @returns A unique identifier for the stored image.
      */
-    store: async (image: Uint8Array, prompt: string) => {
-      const id = Date.now().toString();
+    store: async (image: Uint8Array, prompt: string, id: string) => {
       await storage.setItemRaw(`${id}:image.png`, image);
       await storage.setItem(`${id}:prompt`, prompt);
-      return id;
     },
 
     /**

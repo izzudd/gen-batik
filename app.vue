@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 import '~/assets/css/main.css'
+
+useHead({ title: 'GenBatik | AI Batik Generator' })
 </script>
 
 <template>
