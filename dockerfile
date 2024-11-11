@@ -1,14 +1,14 @@
-FROM node:latest as builder
+FROM node:alpine as builder
 
 WORKDIR /app
 COPY . .
 RUN yarn install
 RUN yarn build
 
-FROM node:alpine
+FROM oven/bun:alpine
 
 WORKDIR /app
-RUN apk add --no-cache --update openssh-client
+RUN apk add --no-cache openssh-client
 COPY --from=builder /app/.output .
 COPY workflow/comfy.pem ./comfy.pem
 

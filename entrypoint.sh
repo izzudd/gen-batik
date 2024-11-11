@@ -7,7 +7,7 @@ rm -f /tmp/stop_tunnel
 trap 'touch /tmp/stop_tunnel; kill $(jobs -p) 2>/dev/null; exit' INT TERM
 
 # Ensure SSH key has correct permissions
-chmod 600 /root/.ssh/comfy.pem
+chmod 600 comfy.pem
 
 maintain_tunnel() {
     while [ ! -f /tmp/stop_tunnel ]; do
@@ -24,4 +24,4 @@ maintain_tunnel() {
 maintain_tunnel &
 
 # Start the Node.js server
-exec node server/index.mjs
+exec bun server/index.mjs

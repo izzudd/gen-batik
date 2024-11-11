@@ -10,7 +10,6 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "@nuxt/fonts": "^0.10.0",
     "comfy-ui-client": "^0.1.2",
     "nuxt": "^3.13.0",
     "vue": "latest",
@@ -20,6 +19,8 @@
     "@nuxt/icon": "^1.5.5",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.47",
-    "tailwindcss": "^3.4.13"
+    "tailwindcss": "^3.4.13",
+    "@tailwindcss/typography": "^0.5.15",
+    "@nuxt/fonts": "^0.10.0"
   }
 }
