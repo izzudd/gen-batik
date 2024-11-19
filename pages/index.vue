@@ -14,7 +14,7 @@ const { data: galleryImages, status } = useFetch<string[]>('/api/images');
       <p class="text-lg text-gray-800">Jelajahi koleksi motif batik yang diciptakan oleh model kami.</p>
       <p class="italic text-gray-600">Klik pada gambar untuk pratinjau pola berulang</p>
     </div>
-    <div class="grid lg:grid-cols-3 gap-4 grid-cols-2">
+    <div class="grid lg:grid-cols-3 gap-2 md:gap-4 grid-cols-2">
       <NuxtLink 
         v-for="imageUrl in galleryImages" 
         class="relative" 
