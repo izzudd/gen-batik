@@ -1,11 +1,11 @@
-FROM node:alpine as builder
+FROM node:alpine AS builder
 
 WORKDIR /app
 COPY . .
 RUN yarn install
 RUN yarn build
 
-FROM oven/bun:alpine
+FROM node:alpine
 
 WORKDIR /app
 RUN apk add --no-cache openssh-client
