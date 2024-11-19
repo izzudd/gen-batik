@@ -19,6 +19,10 @@ export default defineNuxtConfig({
   image: {
     format: ['avif', 'webp', 'jpeg'],
     domains: [stripProtocol(process.env.APP_URL || 'http://localhost:3000')],
+    provider: process.env.NODE_ENV === 'development' ? 'ipx' : 'cloudinary',
+    cloudinary: {
+      'baseURL': 'https://res.cloudinary.com/inva/image/upload/batik',
+    },
   },
 
   postcss: {

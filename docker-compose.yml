@@ -10,3 +10,4 @@ services:
     ports:
       - 2370:3000
     entrypoint: ["/bin/sh", "/app/entrypoint.sh"]
+    restart: always
