@@ -6,7 +6,6 @@ interface QueueMessage {
   error: boolean
 }
 
-const queueLength = ref(0)
 const userPrompt = ref('')
 const generatedImageId = ref('')
 const isGenerating = ref(false)
@@ -31,6 +30,7 @@ const generateBatik = async (event: Event) => {
   }
 }
 
+const queueLength = ref(0)
 let queueMonitor: EventSource
 const setupQueueMonitoring = () => {
   queueMonitor = new EventSource(`/api/queue`)
@@ -48,6 +48,22 @@ const setupQueueMonitoring = () => {
   }
 }
 
+const isServerAvailable = ref(true)
+const checkServer = async () => {
+  try {
+    await $fetch('/api/check')
+    isServerAvailable.value = true
+  } catch {
+    isServerAvailable.value = false
+  }
+}
+
+let serverCheckInterval: NodeJS.Timeout
+const startServerCheck = () => {
+  checkServer()
+  serverCheckInterval = setInterval(checkServer, 30000) // Check every 30 seconds
+}
+
 const generateRandomPrompt = () => {
   const elements = {
     colors: ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'pink', 'black', 'white', 'earth'],
@@ -58,8 +74,14 @@ const generateRandomPrompt = () => {
   userPrompt.value = `batik with ${getRandomElement(elements.colors)} color ${getRandomElement(elements.patterns)} in ${getRandomElement(elements.colors)} background`
 }
 
-onMounted(() => setupQueueMonitoring())
-onUnmounted(() => queueMonitor?.close())
+onMounted(() => {
+  setupQueueMonitoring()
+  startServerCheck()
+})
+onUnmounted(() => {
+  queueMonitor?.close()
+  clearInterval(serverCheckInterval)
+})
 </script>
 
 <template>
@@ -68,7 +90,7 @@ onUnmounted(() => queueMonitor?.close())
       <h1 class="text-4xl font-bold mb-2">Buat Pola<Icon name="heroicons:sparkles-solid" class="text-yellow-400"/></h1>
       <p class="text-lg italic text-gray-600">Buat motif batikmu sendiri cukup dengan deskripsi singkat.</p>
     </div>
-    <form @submit="generateBatik" class="flex justify-center items-center">
+    <form @submit="generateBatik" class="flex justify-center items-center" :class="{ 'opacity-50 pointer-events-none': !isServerAvailable }">
       <div class="max-w-prose w-full flex border-b border-gray-300 p-2">
         <input 
           type="text" 
@@ -83,6 +105,7 @@ onUnmounted(() => queueMonitor?.close())
         </span>
       </div>
     </form>
+    <div v-if="!isServerAvailable" class="text-red-500 text-center mt-4">Server sedang tidak tersedia, silahkan coba beberapa saat lagi</div>
     <div class="flex justify-center mt-4 flex-col items-center">
       <NuxtLink class="relative max-w-full w-[512px] aspect-square" :to="canDisplayImage ? `/preview?image=${generatedImageUrl}` : undefined">
         <div v-if="isGenerating"class="w-full aspect-square bg-gray-200 animate-pulse" />

@@ -13,16 +13,18 @@ export default defineEventHandler(async event => {
   const queue = useQueueService();
 
   const safePrompt = prompt.toLowerCase().includes('batik') ? prompt : `batik with ${prompt}`;
+  const completePrompt = `${safePrompt}, contrast, 4k, high quality`
   console.log('Generating image with prompt:', safePrompt);
 
   const id = queue.addTask(async (id: string) => {
     const { comfyUrl } = useRuntimeConfig();
     const client = new ComfyUIClient(comfyUrl, randomUUID());
     await client.connect();
-    const images = await client.getImages(getPromptedWorkflow(safePrompt));
+    const images = await client.getImages(getPromptedWorkflow(completePrompt));
     const { blob } = images[Target.output][0];
     const imageData = new Uint8Array(await blob.arrayBuffer());
     await storage.store(imageData, safePrompt, id);
+    await client.disconnect();
   });
   
   return id;
