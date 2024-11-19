@@ -1,12 +1,14 @@
 <script lang="ts" setup>
-const { image } = useRoute().query
-onMounted(() => {
-  if (image) document.documentElement.style.backgroundImage = `url(${image})`;
-  document.documentElement.style.backgroundRepeat = 'repeat';
-})
-onUnmounted(() => {
-  document.documentElement.style.backgroundImage = '';
-})
+const { image } = useRoute().query as { image: string }
+
+const setBackgroundPattern = (imageUrl?: string) => {
+  const root = document.documentElement.style
+  root.backgroundImage = imageUrl ? `url(${imageUrl})` : ''
+  root.backgroundRepeat = imageUrl ? 'repeat' : 'initial'
+}
+
+onMounted(() => setBackgroundPattern(image))
+onUnmounted(() => setBackgroundPattern())
 </script>
 
 <template>

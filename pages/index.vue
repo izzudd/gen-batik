@@ -1,5 +1,10 @@
 <script lang="ts" setup>
-const { data: images, status } = useFetch('/api/images');
+interface BatikGallery {
+  imageUrls: string[]
+  isLoading: boolean
+}
+
+const { data: galleryImages, status } = useFetch<string[]>('/api/images');
 </script>
 
 <template>
@@ -10,9 +15,13 @@ const { data: images, status } = useFetch('/api/images');
       <p class="italic text-gray-600">Klik pada gambar untuk pratinjau pola berulang</p>
     </div>
     <div class="grid lg:grid-cols-3 gap-4 grid-cols-2">
-      <NuxtLink v-for="image in images" class="relative" :to="`/preview?image=${image}`">
+      <NuxtLink 
+        v-for="imageUrl in galleryImages" 
+        class="relative" 
+        :to="`/preview?image=${imageUrl}`"
+      >
         <div class="w-full aspect-square bg-gray-200 animate-pulse"></div>
-        <img loading="lazy" :src="image" class="absolute top-0 left-0">
+        <img loading="lazy" :src="imageUrl" class="absolute top-0 left-0 z-10">
       </NuxtLink>
     </div>
   </div>
