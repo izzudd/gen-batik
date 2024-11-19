@@ -7,6 +7,7 @@ export default defineNuxtConfig({
       state: { driver: 'memory' },
       data: { driver: 'fs', base: './comfy-output' },
     },
+    preset: 'bun',
   },
 
   runtimeConfig: {
