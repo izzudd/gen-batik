@@ -21,7 +21,7 @@ export default defineNuxtConfig({
     domains: [stripProtocol(process.env.APP_URL || 'http://localhost:3000')],
     provider: process.env.NODE_ENV === 'development' ? 'ipx' : 'cloudinary',
     cloudinary: {
-      'baseURL': 'https://res.cloudinary.com/inva/image/upload/batik',
+      'baseURL': 'https://res.cloudinary.com/demo/image/fetch/',
     },
   },
 
