@@ -24,4 +24,4 @@ maintain_tunnel() {
 maintain_tunnel &
 
 # Start the Node.js server
-exec bun server/index.mjs
+exec node server/index.mjs
