@@ -12,13 +12,13 @@ export default defineNuxtConfig({
   runtimeConfig: {
     comfyUrl: 'localhost:' + (process.env.COMFY_PORT || '8188'),
     public: {
-      appUrl: process.env.APP_URL || ('http://localhost:' + (process.env.PORT || '3000')),
+      appUrl: process.env.APP_URL || 'http://localhost:3000',
     }
   },
 
   image: {
-    format: ['avif', 'webp'],
-    domains: ['batik.izzudd.my.id', 'localhost:3000'],
+    format: ['avif', 'webp', 'jpeg'],
+    domains: [stripProtocol(process.env.APP_URL || 'http://localhost:3000')],
   },
 
   postcss: {
@@ -31,3 +31,7 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-04-03',
   devtools: { enabled: true }
 })
+
+function stripProtocol(url: string): string {
+  return url.replace(/(^\w+:|^)\/\//, '');
+}

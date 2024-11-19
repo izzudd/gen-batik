@@ -1,11 +1,53 @@
 <script lang="ts" setup>
 interface BatikGallery {
-  imageUrls: string[]
-  isLoading: boolean
+  images: string[]
+  hasMore: boolean
 }
 
-const { data: galleryImages, status } = useFetch<string[]>('/api/images');
+const page = ref(1);
+const images = ref<string[]>([]);
+const isLoading = ref(false);
+const observer = ref<IntersectionObserver | null>(null);
+const loadingTrigger = ref<HTMLElement | null>(null);
 const appUrl = useRuntimeConfig().public.appUrl;
+
+const fetchImages = async () => {
+  if (isLoading.value) return;
+  isLoading.value = true;
+  
+  const { data } = await useFetch<BatikGallery>('/api/images', {
+    params: { page: page.value, limit: 12 }
+  });
+
+  if (data.value) {
+    images.value.push(...data.value.images);
+    if (data.value.hasMore) {
+      page.value++;
+    } else {
+      observer.value?.disconnect();
+    }
+  }
+  isLoading.value = false;
+};
+
+onMounted(() => {
+  observer.value = new IntersectionObserver(([entry]) => {
+    if (entry.isIntersecting) {
+      fetchImages();
+    }
+  });
+
+  if (loadingTrigger.value) {
+    observer.value.observe(loadingTrigger.value);
+  }
+});
+
+onUnmounted(() => {
+  observer.value?.disconnect();
+});
+
+// Initial load
+fetchImages();
 </script>
 
 <template>
@@ -17,7 +59,7 @@ const appUrl = useRuntimeConfig().public.appUrl;
     </div>
     <div class="grid lg:grid-cols-3 gap-2 md:gap-4 grid-cols-2">
       <div 
-        v-for="imageUrl in galleryImages" 
+        v-for="imageUrl in images" 
         class="group relative" 
       >
         <NuxtLink :to="`/preview?image=${imageUrl}`">
@@ -28,10 +70,15 @@ const appUrl = useRuntimeConfig().public.appUrl;
           :to="imageUrl"
           target="_blank"
           download
-          class="absolute bottom-2 right-2 bg-white/40 backdrop-blur-lg px-2 py-1 rounded lg:hidden group-hover:block z-10">
+          class="absolute bottom-2 right-2 bg-white/40 backdrop-blur-lg px-2 py-1 rounded hidden group-hover:block z-10 border border-black/20">
           <Icon name="heroicons:arrow-down-tray"/> Unduh pola
         </NuxtLink>
       </div>
+    </div>
+    <!-- Loading trigger element -->
+    <div ref="loadingTrigger" class="h-4 mt-4"></div>
+    <div v-if="isLoading" class="text-center py-4">
+      Loading more images...
     </div>
   </div>
 </template>
