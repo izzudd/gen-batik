@@ -4,7 +4,7 @@ const appUrl = useRuntimeConfig().public.appUrl
 
 const img = useImage()
 const backgroundImage = computed(() => {
-  const imgUrl = img(`${appUrl}${image}`, { width: 512, format: 'jpg' })
+  const imgUrl = img(`${appUrl}${image}`, { width: 256, format: 'jpg' })
   return imgUrl
 })
 

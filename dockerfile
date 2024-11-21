@@ -5,7 +5,7 @@ COPY . .
 RUN yarn install
 RUN yarn build
 
-FROM node:alpine
+FROM oven/bun:alpine
 
 WORKDIR /app
 RUN apk add --no-cache openssh-client
