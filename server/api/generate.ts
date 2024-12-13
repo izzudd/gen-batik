@@ -6,7 +6,17 @@ import { ComfyUIClient } from "comfy-ui-client";
 import { randomUUID } from "crypto";
 
 export default defineEventHandler(async event => {
-  const { prompt } = getQuery<{ prompt: string }>(event);
+  const { prompt, token } = await readBody<{ prompt: string, token: string }>(event);
+
+  if (!token) {
+    throw createError({
+      statusCode: 422,
+      statusMessage: 'Token not provided.',
+    })
+  }
+
+  const turnstileValidation = await verifyTurnstileToken(token)
+  if (!turnstileValidation.success) throw createError({ status: 400, message: 'Invalid verification token' });
   if (!prompt) throw createError({ status: 400, message: 'Missing prompt' });
 
   const storage = storageService(useStorage('data'));

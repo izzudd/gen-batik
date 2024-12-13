@@ -7,6 +7,7 @@ interface QueueMessage {
 }
 
 const userPrompt = ref('')
+const validationToken = ref('')
 const generatedImageId = ref('')
 const isGenerating = ref(false)
 const hasError = ref(false)
@@ -22,7 +23,11 @@ const generateBatik = async (event: Event) => {
   
   try {
     generatedImageId.value = await $fetch('/api/generate', { 
-      query: { prompt: userPrompt.value } 
+      method: 'POST',
+      body: { 
+        prompt: userPrompt.value,
+        token: validationToken.value,
+      } 
     })
   } catch (err) {
     hasError.value = true
@@ -90,7 +95,7 @@ onUnmounted(() => {
       <h1 class="text-4xl font-bold mb-2">Buat Pola<Icon name="heroicons:sparkles-solid" class="text-yellow-400"/></h1>
       <p class="text-lg italic text-gray-600">Buat motif batikmu sendiri cukup dengan deskripsi singkat.</p>
     </div>
-    <form @submit="generateBatik" class="flex justify-center items-center" :class="{ 'opacity-50 pointer-events-none': !isServerAvailable }">
+    <form @submit="generateBatik" class="flex justify-center items-center flex-col gap-2" :class="{ 'opacity-50 pointer-events-none': !isServerAvailable }">
       <div class="max-w-prose w-full flex border-b border-gray-300 p-2">
         <input 
           type="text" 
@@ -104,6 +109,7 @@ onUnmounted(() => {
           <button type="button" @click="generateRandomPrompt()"><Icon class="flex items-center" name="mdi:dice-multiple" size="1.5rem" /></button>
         </span>
       </div>
+      <NuxtTurnstile v-model="validationToken" />
     </form>
     <div v-if="!isServerAvailable" class="text-red-500 text-center mt-4">Server sedang tidak tersedia, silahkan coba beberapa saat lagi</div>
     <div class="flex justify-center mt-4 flex-col items-center">
