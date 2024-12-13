@@ -1,6 +1,8 @@
 FROM node:alpine AS builder
 
 WORKDIR /app
+RUN corepack enable && \
+    corepack prepare yarn@4.2.2 --activate
 COPY . .
 RUN yarn install
 RUN yarn build
