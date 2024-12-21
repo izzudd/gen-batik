@@ -9,7 +9,8 @@ interface QueueMessage {
 }
 
 const userPrompt = ref('')
-const validationToken = ref()
+const validationToken = ref('')
+const turnstile = ref()
 const generatedImageId = ref('')
 const isGenerating = ref(false)
 const errorMessage = ref('')
@@ -41,7 +42,7 @@ const generateBatik = async (event: Event) => {
 }
 
 watch(isGenerating, (isGenerating) => {
-  if (!isGenerating) validationToken.value?.reset()
+  if (!isGenerating) turnstile.value?.reset()
 })
 
 const queueLength = ref(0)
@@ -51,6 +52,7 @@ const setupQueueMonitoring = () => {
   queueMonitor.onmessage = (event) => {
     const { id, length, state, error }: QueueMessage = JSON.parse(event.data)
     queueLength.value = length
+    console.log('Queue message', id, length, state, error)
 
     if (error) {
       errorMessage.value = 'Terjadi kesalahan saat membuat batik, silahkan coba lagi beberapa saat lagi'
@@ -118,9 +120,10 @@ onUnmounted(() => {
           <button type="button" @click="generateRandomPrompt()"><Icon class="flex items-center" name="mdi:dice-multiple" size="1.5rem" /></button>
         </span>
       </div>
-      <NuxtTurnstile v-model="validationToken" />
+      <NuxtTurnstile v-model="validationToken" ref="turnstile" />
     </form>
     <div v-if="!isServerAvailable" class="text-red-500 text-center mt-4">Server sedang tidak tersedia, silahkan coba beberapa saat lagi</div>
+    <div v-if="errorMessage" class="text-red-500 text-sm mt-4">{{ errorMessage }}</div>
     <div class="flex justify-center mt-4 flex-col items-center">
       <NuxtLink class="relative max-w-full w-[512px] aspect-square" :to="canDisplayImage ? `/preview?image=${generatedImageUrl}` : undefined">
         <div v-if="isGenerating"class="w-full aspect-square bg-gray-200 animate-pulse" />
@@ -130,7 +133,6 @@ onUnmounted(() => {
         >
       </NuxtLink>
       <div v-if="queueLength" class="text-gray-600 text-sm mt-4">sedang ada {{ queueLength }} proses dalam antrean</div>
-      <div v-if="errorMessage" class="text-red-500 text-sm mt-4">{{ errorMessage }}</div>
     </div>
   </div>
 </template>
