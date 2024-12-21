@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { FetchError } from "ofetch";
+
 interface QueueMessage {
   id: string
   length: number
@@ -7,19 +9,19 @@ interface QueueMessage {
 }
 
 const userPrompt = ref('')
-const validationToken = ref('')
+const validationToken = ref()
 const generatedImageId = ref('')
 const isGenerating = ref(false)
-const hasError = ref(false)
+const errorMessage = ref('')
 
 const generatedImageUrl = computed(() => `/generated/${generatedImageId.value}`)
-const canDisplayImage = computed(() => !hasError.value && !isGenerating.value && generatedImageId.value)
+const canDisplayImage = computed(() => !errorMessage.value && !isGenerating.value && generatedImageId.value)
 
 const generateBatik = async (event: Event) => {
   event.preventDefault()
   generatedImageId.value = ''
   isGenerating.value = true
-  hasError.value = false
+  errorMessage.value = ''
   
   try {
     generatedImageId.value = await $fetch('/api/generate', { 
@@ -30,10 +32,17 @@ const generateBatik = async (event: Event) => {
       } 
     })
   } catch (err) {
-    hasError.value = true
+    if (err instanceof FetchError && err.statusCode === 422)
+      errorMessage.value = 'Tolong centang kotak validasi untuk memastkan anda bukan robot'
+    else 
+      errorMessage.value = 'Terjadi kesalahan pada server, silahkan coba lagi'
     isGenerating.value = false
   }
 }
+
+watch(isGenerating, (isGenerating) => {
+  if (!isGenerating) validationToken.value?.reset()
+})
 
 const queueLength = ref(0)
 let queueMonitor: EventSource
@@ -44,7 +53,7 @@ const setupQueueMonitoring = () => {
     queueLength.value = length
 
     if (error) {
-      hasError.value = true
+      errorMessage.value = 'Terjadi kesalahan saat membuat batik, silahkan coba lagi beberapa saat lagi'
       return
     }
     if (id === generatedImageId.value) {
@@ -121,7 +130,7 @@ onUnmounted(() => {
         >
       </NuxtLink>
       <div v-if="queueLength" class="text-gray-600 text-sm mt-4">sedang ada {{ queueLength }} proses dalam antrean</div>
-      <div v-if="hasError" class="text-red-500 text-sm mt-4">Terjadi kesalahan, silahkan coba lagi</div>
+      <div v-if="errorMessage" class="text-red-500 text-sm mt-4">{{ errorMessage }}</div>
     </div>
   </div>
 </template>
