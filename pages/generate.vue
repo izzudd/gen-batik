@@ -58,7 +58,7 @@ const setupQueueMonitoring = () => {
       errorMessage.value = 'Terjadi kesalahan saat membuat batik, silahkan coba lagi beberapa saat lagi'
       return
     }
-    if (id === generatedImageId.value) {
+    if (id === generatedImageId.value && state === 'done') {
       isGenerating.value = false
     }
   }
@@ -128,8 +128,7 @@ onUnmounted(() => {
       <NuxtLink class="relative max-w-full w-[512px] aspect-square" :to="canDisplayImage ? `/preview?image=${generatedImageUrl}` : undefined">
         <div v-if="isGenerating"class="w-full aspect-square bg-gray-200 animate-pulse" />
         <img v-if="canDisplayImage"
-          class="absolute top-0 left-0 z-10 w-full h-full" 
-          loading="lazy" :src="generatedImageUrl"
+          class="absolute top-0 left-0 z-10 w-full h-full" :src="generatedImageUrl"
         >
       </NuxtLink>
       <div v-if="queueLength" class="text-gray-600 text-sm mt-4">sedang ada {{ queueLength }} proses dalam antrean</div>
