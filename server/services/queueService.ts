@@ -1,5 +1,5 @@
 type State = 'start' | 'done' | 'error';
-type Listener = (length: number, state: State, id: string, error?: unknown) => void;
+type Listener = { callback: (length: number, state: State, id: string, error?: unknown) => void, timestamp: number };
 type TaskFn = (id: string) => Promise<void>
 
 class Task {
@@ -22,13 +22,18 @@ class QueueService {
   taskQueue: Task[] = [];
   isProcessing = false;
 
-  listen(listener: Listener) {
-    this.listeners.push(listener);
+  listen(listener: (length: number, state: State, id: string, error?: unknown) => void) {
+    const now = Date.now();
+    this.listeners.push({ callback: listener, timestamp: now });
+    listener(this.queueLength.value, 'start', '', undefined);
+
+    // Remove listeners older than 15 minutes
+    this.listeners = this.listeners.filter(listener => (now - listener.timestamp) < 15 * 60 * 1000);
   }
 
   notifyAndUpdate(state: State, id: string, error?: unknown, increment: number = 0) {
     this.queueLength.value += increment;
-    this.listeners.forEach(watcher => watcher(this.queueLength.value, state, id, error));
+    this.listeners.forEach(listener => listener.callback(this.queueLength.value, state, id, error));
   }
 
   async processQueue() {
