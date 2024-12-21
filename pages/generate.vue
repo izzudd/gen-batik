@@ -123,7 +123,7 @@ onUnmounted(() => {
       <NuxtTurnstile v-model="validationToken" ref="turnstile" />
     </form>
     <div v-if="!isServerAvailable" class="text-red-500 text-center mt-4">Server sedang tidak tersedia, silahkan coba beberapa saat lagi</div>
-    <div v-if="errorMessage" class="text-red-500 text-sm mt-4">{{ errorMessage }}</div>
+    <div v-if="errorMessage" class="text-red-500 text-center text-sm mt-4">{{ errorMessage }}</div>
     <div class="flex justify-center mt-4 flex-col items-center">
       <NuxtLink class="relative max-w-full w-[512px] aspect-square" :to="canDisplayImage ? `/preview?image=${generatedImageUrl}` : undefined">
         <div v-if="isGenerating"class="w-full aspect-square bg-gray-200 animate-pulse" />
