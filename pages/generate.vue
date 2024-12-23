@@ -54,7 +54,7 @@ const setupQueueMonitoring = () => {
     queueLength.value = length
     console.log('Queue message', id, length, state, error)
 
-    if (error) {
+    if (error && id === generatedImageId.value) {
       errorMessage.value = 'Terjadi kesalahan saat membuat batik, silahkan coba lagi beberapa saat lagi'
       return
     }
