@@ -7,22 +7,19 @@ export default defineNuxtConfig({
       state: { driver: 'memory' },
       data: { driver: 'fs', base: './comfy-output' },
     },
+    // preset: 'bun',
   },
 
   runtimeConfig: {
     comfyUrl: 'localhost:' + (process.env.COMFY_PORT || '8188'),
     public: {
       appUrl: process.env.APP_URL || 'http://localhost:3000',
-    }
+    },
   },
 
   image: {
     format: ['avif', 'webp', 'jpeg'],
     domains: [stripProtocol(process.env.APP_URL || 'http://localhost:3000')],
-    provider: process.env.NODE_ENV === 'development' ? 'ipx' : 'cloudinary',
-    cloudinary: {
-      'baseURL': 'https://res.cloudinary.com/inva/image/fetch/',
-    },
   },
 
   postcss: {
@@ -33,7 +30,7 @@ export default defineNuxtConfig({
   },
 
   compatibilityDate: '2024-04-03',
-  devtools: { enabled: true }
+  devtools: { enabled: true },
 })
 
 function stripProtocol(url: string): string {
