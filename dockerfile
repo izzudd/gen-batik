@@ -1,11 +1,13 @@
-FROM oven/bun:alpine AS builder
+FROM node:alpine AS builder
 
 WORKDIR /app
+RUN corepack enable && \
+    corepack prepare yarn@4.5.0 --activate
 COPY . .
-RUN bun install
-RUN bun run build
+RUN yarn install
+RUN yarn build
 
-FROM oven/bun:alpine
+FROM node:alpine
 
 WORKDIR /app
 RUN apk add --no-cache openssh-client autossh

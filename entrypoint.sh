@@ -13,4 +13,4 @@ chmod 600 comfy.pem
 autossh -M 20000 -o StrictHostKeyChecking=no -i ./comfy.pem -p ${SSH_PORT} -L ${COMFY_PORT}:localhost:${COMFY_PORT} ${SSH_USER}@${SSH_SERVER} -N &
 
 # Start the Node.js server
-exec bun server/index.mjs
+exec node server/index.mjs
