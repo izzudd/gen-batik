@@ -1,16 +1,14 @@
-FROM node:alpine AS builder
+FROM oven/bun:alpine AS builder
 
 WORKDIR /app
-RUN corepack enable && \
-    corepack prepare yarn@4.2.2 --activate
 COPY . .
-RUN yarn install
-RUN yarn build
+RUN bun install
+RUN bun run build
 
 FROM oven/bun:alpine
 
 WORKDIR /app
-RUN apk add --no-cache openssh-client
+RUN apk add --no-cache openssh-client autossh
 COPY --from=builder /app/.output .
 COPY workflow/comfy.pem ./comfy.pem
 
