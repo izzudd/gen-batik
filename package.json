@@ -10,21 +10,21 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "nuxt": "^3.13.0",
-    "vue": "^3.5.13",
-    "vue-router": "latest"
+    "nuxt": "^3.17.4",
+    "vue": "^3.5.14",
+    "vue-router": "^4.5.1"
   },
   "devDependencies": {
-    "@nuxt/fonts": "^0.10.0",
-    "@nuxt/icon": "^1.5.5",
-    "@nuxt/image": "^1.8.1",
-    "@nuxt/scripts": "^0.6.0 || ^0.7.0 || ^0.8.0 || ^0.9.0",
-    "@nuxtjs/turnstile": "0.9.11",
-    "@tailwindcss/typography": "^0.5.15",
-    "@types/ws": "^8.5.13",
-    "autoprefixer": "^10.4.20",
+    "@nuxt/fonts": "^0.11.4",
+    "@nuxt/icon": "^1.13.0",
+    "@nuxt/image": "^1.10.0",
+    "@nuxt/scripts": "^0.11.7",
+    "@nuxtjs/turnstile": "1.0.0",
+    "@tailwindcss/typography": "^0.5.16",
+    "@types/ws": "^8.18.1",
+    "autoprefixer": "^10.4.21",
     "comfy-ui-client": "^0.1.2",
-    "postcss": "^8.4.47",
-    "tailwindcss": "^3.4.13"
+    "postcss": "^8.5.3",
+    "tailwindcss": "^3.4.17"
   }
 }
