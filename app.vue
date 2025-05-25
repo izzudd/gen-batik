@@ -3,7 +3,7 @@ import '~/assets/css/main.css'
 
 useHead({ 
   title: 'GenBatik | AI Batik Generator',
-  script: [{ src: "https://medama.izzudd.my.id/script.js", defer: true }],
+  // script: [{ src: "https://medama.izzudd.my.id/script.js", defer: true }],
 })
 </script>
 
