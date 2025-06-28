@@ -24,6 +24,6 @@ logs
 !.env.example
 
 comfy*
-workflow
+# workflow
 _special*
 .yarn

@@ -1,0 +1,203 @@
+{
+  "81": {
+    "inputs": {
+      "filename_prefix": "Prod",
+      "images": [
+        "149",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "Save Image"
+    }
+  },
+  "82": {
+    "inputs": {
+      "model_name": "RealESRGAN_x4.pth"
+    },
+    "class_type": "UpscaleModelLoader",
+    "_meta": {
+      "title": "Load Upscale Model"
+    }
+  },
+  "84": {
+    "inputs": {
+      "upscale_model": [
+        "82",
+        0
+      ],
+      "image": [
+        "115:9",
+        0
+      ]
+    },
+    "class_type": "ImageUpscaleWithModel",
+    "_meta": {
+      "title": "Upscale Image (using Model)"
+    }
+  },
+  "149": {
+    "inputs": {
+      "upscale_method": "nearest-exact",
+      "width": 512,
+      "height": 512,
+      "crop": "disabled",
+      "image": [
+        "84",
+        0
+      ]
+    },
+    "class_type": "ImageScale",
+    "_meta": {
+      "title": "Upscale Image"
+    }
+  },
+  "115:0": {
+    "inputs": {
+      "unet_name": "sd-batik-llava/diffusion_pytorch_model.safetensors",
+      "weight_dtype": "default"
+    },
+    "class_type": "UNETLoader",
+    "_meta": {
+      "title": "Load Diffusion Model"
+    }
+  },
+  "115:1": {
+    "inputs": {
+      "ckpt_name": "stable-diffusion-v1-5/v1-5-pruned-emaonly.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "Load Checkpoint"
+    }
+  },
+  "115:2": {
+    "inputs": {
+      "width": 512,
+      "height": 512,
+      "batch_size": 1
+    },
+    "class_type": "EmptyLatentImage",
+    "_meta": {
+      "title": "Empty Latent Image"
+    }
+  },
+  "115:3": {
+    "inputs": {
+      "ratio": 0.75,
+      "model1": [
+        "115:0",
+        0
+      ],
+      "model2": [
+        "115:1",
+        0
+      ]
+    },
+    "class_type": "ModelMergeSimple",
+    "_meta": {
+      "title": "ModelMergeSimple"
+    }
+  },
+  "115:4": {
+    "inputs": {
+      "text": "batik with intricate pattern in dark green, orange, and white color",
+      "clip": [
+        "115:1",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "115:5": {
+    "inputs": {
+      "text": "pixelated, color bleeding, low details, watermark, deformed, text, blur, noise, grit, dull, washed out, low contrast, blurry, deep-fried, hazy, malformed, warped, deformed, bordered",
+      "clip": [
+        "115:1",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "115:6": {
+    "inputs": {
+      "tiling": "enable",
+      "copy_vae": "Make a copy",
+      "vae": [
+        "115:1",
+        2
+      ]
+    },
+    "class_type": "MakeCircularVAE",
+    "_meta": {
+      "title": "Make Circular VAE"
+    }
+  },
+  "115:7": {
+    "inputs": {
+      "tiling": "enable",
+      "copy_model": "Modify in place",
+      "model": [
+        "115:3",
+        0
+      ]
+    },
+    "class_type": "SeamlessTile",
+    "_meta": {
+      "title": "Seamless Tile"
+    }
+  },
+  "115:8": {
+    "inputs": {
+      "seed": 832903742119381,
+      "steps": 60,
+      "cfg": 7.5,
+      "sampler_name": "euler_ancestral",
+      "scheduler": "normal",
+      "denoise": 1,
+      "model": [
+        "115:7",
+        0
+      ],
+      "positive": [
+        "115:4",
+        0
+      ],
+      "negative": [
+        "115:5",
+        0
+      ],
+      "latent_image": [
+        "115:2",
+        0
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "KSampler"
+    }
+  },
+  "115:9": {
+    "inputs": {
+      "samples": [
+        "115:8",
+        0
+      ],
+      "vae": [
+        "115:6",
+        0
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decode"
+    }
+  }
+}
