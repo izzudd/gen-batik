@@ -53,25 +53,6 @@
       "title": "Upscale Image"
     }
   },
-  "115:0": {
-    "inputs": {
-      "unet_name": "sd-batik-llava/diffusion_pytorch_model.safetensors",
-      "weight_dtype": "default"
-    },
-    "class_type": "UNETLoader",
-    "_meta": {
-      "title": "Load Diffusion Model"
-    }
-  },
-  "115:1": {
-    "inputs": {
-      "ckpt_name": "stable-diffusion-v1-5/v1-5-pruned-emaonly.safetensors"
-    },
-    "class_type": "CheckpointLoaderSimple",
-    "_meta": {
-      "title": "Load Checkpoint"
-    }
-  },
   "115:2": {
     "inputs": {
       "width": 512,
@@ -83,9 +64,28 @@
       "title": "Empty Latent Image"
     }
   },
+  "115:0": {
+    "inputs": {
+      "unet_name": "sd-batik-llava.safetensors",
+      "weight_dtype": "default"
+    },
+    "class_type": "UNETLoader",
+    "_meta": {
+      "title": "Load Diffusion Model"
+    }
+  },
+  "115:1": {
+    "inputs": {
+      "ckpt_name": "SD1.5/v1-5-pruned-emaonly.ckpt"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "Load Checkpoint"
+    }
+  },
   "115:3": {
     "inputs": {
-      "ratio": 0.75,
+      "ratio": 0.7500000000000001,
       "model1": [
         "115:0",
         0
@@ -156,7 +156,7 @@
   },
   "115:8": {
     "inputs": {
-      "seed": 832903742119381,
+      "seed": 621047134079932,
       "steps": 60,
       "cfg": 7.5,
       "sampler_name": "euler_ancestral",
