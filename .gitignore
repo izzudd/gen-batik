@@ -27,3 +27,9 @@ comfy*
 # workflow
 _special*
 .yarn
+
+# Never commit SSH keys, even if renamed
+*.pem
+*.key
+id_rsa*
+id_ed25519*
